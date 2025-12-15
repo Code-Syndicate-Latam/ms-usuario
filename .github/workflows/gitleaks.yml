@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
       pull-requests: write
 
     steps:
@@ -28,8 +27,6 @@ jobs:
         with:
           gitleaks_version: "v8.21.2"
           config-path: .gitleaks.toml
-          report-format: sarif
-          report-path: gitleaks-report.sarif
           severity: high
           no-banner: false
           exit-code: 1
@@ -38,20 +35,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
 
-      - name: Upload SARIF report to GitHub Security
-        if: always() && github.event_name == 'pull_request'
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: gitleaks-report.sarif
-          wait-for-processing: true
-
       - name: Fail workflow if leaks found
-        if: steps.gitleaks.outcome == 'failure'
+        if: failure()
         run: |
           echo "❌ SECRETOS DETECTADOS - BLOCKING MERGE ❌"
           echo "Se encontraron ${{ steps.gitleaks.outputs.findingCount }} secretos en el código"
           echo ""
-          echo "Revisa el reporte de seguridad en GitHub Security tab"
-          echo "o corre GitLeaks localmente:"
+          echo "Revisa los logs de arriba para ver detalles específicos"
+          echo "o corre GitLeaks localmente para debuggear:"
           echo "npx gitleaks detect --source . --verbose"
           exit 1
