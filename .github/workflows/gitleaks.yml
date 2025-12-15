@@ -26,7 +26,8 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         id: gitleaks
         with:
-          config-path: .gitleaks.toml  # Config personalizada (opcional)
+          gitleaks_version: "v8.21.2"
+          config-path: .gitleaks.toml
           report-format: sarif
           report-path: gitleaks-report.sarif
           severity: high
@@ -39,7 +40,7 @@ jobs:
 
       - name: Upload SARIF report to GitHub Security
         if: always() && github.event_name == 'pull_request'
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: gitleaks-report.sarif
           wait-for-processing: true
