@@ -17,8 +17,8 @@ import java.time.LocalDate;
 public class UserDetail {
 
     /**
-     * Identificador único para el detalle del usuario.
-     * Se genera automáticamente por la base de datos (BIGSERIAL).
+     * Identificador unico para el detalle del usuario.
+     * Se genera automaticamente por la base de datos (BIGSERIAL).
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_detail_generator")

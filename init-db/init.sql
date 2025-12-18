@@ -14,6 +14,7 @@ DROP TABLE IF EXISTS DOCUMENT_TYPE;
 /*==============================================================*/
 CREATE TABLE DOCUMENT_TYPE (
    DOCUMENT_TYPE_ID     BIGSERIAL           NOT NULL,
+   DOCUMENT_NAME        VARCHAR(100)         NOT NULL,
    DESCRIPTION          VARCHAR(50)         NULL,
    STATUS               BOOLEAN             NOT NULL DEFAULT TRUE,
    CONSTRAINT PK_DOCUMENT_TYPE PRIMARY KEY (DOCUMENT_TYPE_ID)
@@ -125,12 +126,12 @@ ALTER TABLE PERMISSION_ROLE
 -- 1. Poblando tablas maestras (sin dependencias)
 
 -- Insertando los tipos de documento
-INSERT INTO DOCUMENT_TYPE (DESCRIPTION, STATUS) VALUES
-('Cédula de Ciudadanía', true),
-('Cédula de Extranjería', true),
-('Pasaporte', true),
-('NIT', true),
-('Permiso Especial de Permanencia', true);
+INSERT INTO DOCUMENT_TYPE (DOCUMENT_NAME, DESCRIPTION, STATUS) VALUES
+('CC','Cédula de Ciudadanía', true),
+('CE','Cédula de Extranjería', true),
+('PA','Pasaporte', true),
+('NI','NIT', true),
+('PEP','Permiso Especial de Permanencia', true);
 
 -- Insertando los roles solicitados
 INSERT INTO ROLE (ROLE_NAME, DESCRIPTION, STATUS) VALUES
@@ -139,7 +140,7 @@ INSERT INTO ROLE (ROLE_NAME, DESCRIPTION, STATUS) VALUES
 ('Propietario', 'Dueño de una o más propiedades en el sistema.', true),
 ('Arrendatario', 'Usuario que alquila una propiedad.', true),
 ('Guardia', 'Personal de seguridad con acceso a bitácoras y alertas.', true),
-('Agente', 'Agente inmobiliario que gestiona propiedades y clientes.', true),
+('Consultor Inmobiliario', 'Consultor inmobiliario que gestiona propiedades y clientes.', true),
 ('Cliente', 'Usuario interesado en propiedades, con acceso de solo lectura.', true);
 
 -- Insertando tipos de permisos
