@@ -22,6 +22,9 @@ public class DocumentType {
     )
     private Long documentTypeId;
 
+    @Column(name = "document_name", length = 100, nullable = false)
+    private String documentName;
+
     @Column(name = "description", length = 250, nullable = false)
     private String description;
 
