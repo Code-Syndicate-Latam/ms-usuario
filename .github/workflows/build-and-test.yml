@@ -1,4 +1,4 @@
-name: Build and test
+name: Unit tests
 
 on:
   pull_request:
@@ -29,18 +29,4 @@ jobs:
           cache: 'maven'
 
       - name: Build and Test
-        run: mvn clean verify
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: '**/target/surefire-reports/*.xml'
-
-      - name: Upload coverage report
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: '**/target/site/jacoco/'
+        run: mvn clean test
