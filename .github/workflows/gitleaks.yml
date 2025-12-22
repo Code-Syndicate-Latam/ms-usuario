@@ -1,47 +1,14 @@
-name: gitleaks-security-gate
+name: GitLeaks Scan
 
 on:
   pull_request:
-    branches: [ main, master, development ]
+    branches: [ main ]
   push:
-    branches: [ main, master ]
-  workflow_dispatch:
+    branches: [ main ]
 
 jobs:
-  scan-secrets:
-    name: GitLeaks Security Scan
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup GitLeaks
-        uses: gitleaks/gitleaks-action@v2
-        id: gitleaks
-        with:
-          gitleaks_version: "v8.21.2"
-          config-path: .gitleaks.toml
-          severity: high
-          no-banner: false
-          exit-code: 1
-          verbose: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
-
-      - name: Fail workflow if leaks found
-        if: failure()
-        run: |
-          echo "❌ SECRETOS DETECTADOS - BLOCKING MERGE ❌"
-          echo "Se encontraron ${{ steps.gitleaks.outputs.findingCount }} secretos en el código"
-          echo ""
-          echo "Revisa los logs de arriba para ver detalles específicos"
-          echo "o corre GitLeaks localmente para debuggear:"
-          echo "npx gitleaks detect --source . --verbose"
-          exit 1
+  call-central-gitleaks:
+    uses: Code-Syndicate-Latam/org-security/.github/workflows/gitleaks.yml@main
+    with:
+      severity: high
+      branches: "main"
