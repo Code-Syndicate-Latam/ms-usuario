@@ -1,6 +1,7 @@
 package com.teamsoft.ms.usuario.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,11 +33,13 @@ public class UserDetail {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario userApp;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "documenttype_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private DocumentType documentType;
 
 

@@ -15,7 +15,7 @@ RUN mvn package -DskipTests
 
 # ---- Fase 2: Ejecución (Runtime) ----
 # Usamos una imagen ligera con solo el entorno de ejecucion de Java
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 
 # Establecemos el directorio de trabajo
 WORKDIR /app
