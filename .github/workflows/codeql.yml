@@ -9,7 +9,7 @@ on:
     - cron: '* 9 * * *'
 
 permissions:
-  contents: read
+  contents: inherit
 
 jobs:
   codeql_java_backend:
