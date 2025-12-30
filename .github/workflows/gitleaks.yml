@@ -2,9 +2,9 @@ name: GitLeaks Scan
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, developmen ]
   push:
-    branches: [ main ]
+    branches: [ main, development ]
 
 permissions:
   contents: read
