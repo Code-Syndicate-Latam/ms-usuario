@@ -2,97 +2,124 @@
 
 Este proyecto es un microservicio encargado de la gestión de usuarios, roles, permisos y detalles de usuario. Funciona como un **Resource Server**, validando tokens JWT para proteger los endpoints.
 
-## 🚀 Tecnologías Utilizadas
+## 🚀 Tecnologías Utilizadas e Instalación
 
-*   **Java 21**
-*   **Spring Boot 3.5.6**
-*   **Spring Security** (con filtro JWT personalizado)
-*   **Spring Data JPA** (Hibernate)
-*   **PostgreSQL** (Base de datos)
-*   **Lombok**
-*   **Docker** (Para la base de datos)
-*   **Maven**
+Este proyecto requiere un entorno específico. A continuación, se detallan las tecnologías y cómo instalarlas en un entorno Linux (Ubuntu/Debian).
 
-## ⚙️ Pre-requisitos
+### 1. Java 21 (LTS)
+El proyecto utiliza características modernas de Java 21.
+* **Instalación:**
+    ```bash
+    sudo apt update
+    sudo apt install openjdk-21-jdk -y
+    ```
+* **Verificación:** `java -version` (Debe mostrar "21").
 
-*   Java JDK 21 instalado.
-*   Maven instalado.
-*   Docker instalado y corriendo.
+### 2. Maven (Gestor de Dependencias)
+Se encarga de compilar el proyecto y descargar librerías como Spring Boot, Hibernate y Lombok.
+* **Instalación:**
+    ```bash
+    sudo apt install maven -y
+    ```
+* **Verificación:** `mvn -version` (Debe usar la JVM de Java 21).
 
-## 🗄️ Configuración de la Base de Datos
+### 3. Docker (Contenedores)
+Necesario para ejecutar la base de datos PostgreSQL sin instalarla en el sistema operativo base.
+* **Instalación:**
+    ```bash
+    sudo apt install docker.io -y
+    sudo systemctl start docker
+    sudo usermod -aG docker $USER
+    # (Requiere cerrar sesión o usar 'newgrp docker' para aplicar cambios)
+    ```
 
-El proyecto utiliza PostgreSQL. Puedes levantar una instancia rápidamente utilizando Docker con el siguiente comando:
+### 4. Stack de Desarrollo
+Las siguientes librerías se descargan automáticamente vía Maven (`pom.xml`):
+* **Spring Boot 3.5.6**
+* **Spring Security** (Filtros JWT)
+* **Spring Data JPA** (Hibernate)
+* **Lombok** (Reducción de código boilerplate)
+* **PostgreSQL Driver**
+
+---
+
+## 🗄️ Paso 1: Configuración de la Base de Datos
+
+El microservicio requiere una instancia de PostgreSQL corriendo. Usaremos Docker para garantizar que la configuración sea idéntica para todos los desarrolladores.
+
+Ejecuta el siguiente comando para levantar la base de datos:
 
 ```bash
 docker run -d \
   --name ms-usuario-db \
   -p 5432:5432 \
-  -e POSTGRES_DB=db_user \
+  -e POSTGRES_DB=ms-usuario-db \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=admin \
   -v ms_usuario_data:/var/lib/postgresql/data \
   postgres:15
 ```
 
-Este comando:
-*   Crea un contenedor llamado `ms-usuario-db`.
-*   Expone el puerto `5432`.
-*   Configura el usuario `postgres` y contraseña `admin`.
-*   Crea un volumen persistente `ms_usuario_data` para no perder los datos.
+## 🔧 Paso 2: Configuración del Proyecto
 
-## 🔧 Configuración del Proyecto
-
-El archivo de configuración se encuentra en `src/main/resources/application.properties`.
-
-### Variables Clave
-*   **Puerto del Servidor:** `8082`
-*   **Base de Datos:** Conectada a `localhost:5432/db_user`.
-*   **JWT Secret:** La clave secreta utilizada para validar la firma de los tokens entrantes.
+Verifica que el archivo src/main/resources/application.properties coincida con la configuración de Docker.
 
 ```properties
-# Ejemplo de configuración JWT
-jwt.secret=EstaEsUnaClaveSecretaMuySeguraYLoSuficientementeLargaParaHS256
-jwt.expiration=86400000
+    # Configuración del Servidor
+    server.port=8082
+
+    # Conexión a Base de Datos (Debe coincidir con el Docker)
+    spring.datasource.url=jdbc:postgresql://localhost:5432/ms-usuario-db
+    spring.datasource.username=postgres
+    spring.datasource.password=admin
+    spring.datasource.driver-class-name=org.postgresql.Driver
+
+    # Configuración JWT
+    jwt.secret=EstaEsUnaClaveSecretaMuySeguraYLoSuficientementeLargaParaHS256
+    jwt.expiration=86400000
 ```
+## ▶️ Paso 3: Compilación y Ejecución
 
-> **Nota:** Asegúrate de que la `jwt.secret` coincida con la del servicio que genera los tokens (Auth Server).
+Para evitar errores de caché o versiones antiguas, recomendamos una instalación limpia.
 
-## ▶️ Ejecución
+### 1. Compilar y empaquetar el proyecto:
 
-1.  Clona el repositorio.
-2.  Asegúrate de que la base de datos Docker esté corriendo.
-3.  Ejecuta el proyecto con Maven:
-
-```bash
-mvn spring-boot:run
+```Bash
+    mvn clean package -DskipTests
 ```
+*(Esperar a ver el mensaje "BUILD SUCCESS").*
 
-El servicio estará disponible en: `http://localhost:8082`
+### 2. Ejecutar el microservicio:
 
-## 🔒 Seguridad (JWT)
+```Bash
+    java -jar target/*.jar
+```
+*Verificar que está corriendo: La terminal debe mostrar logs y detenerse en: Tomcat started on port(s): 8080 (http)*
 
-Este microservicio actúa como un **Resource Server**. No genera tokens (no tiene endpoint de login), pero valida que las peticiones entrantes tengan un token válido.
+## 🕵️‍♂️ Paso 4: Pruebas de Humo (Smoke Test)
 
-### Cómo probar con Postman
-1.  Genera un token JWT válido (puedes usar [jwt.io](https://jwt.io/) para simularlo).
-    *   **Algoritmo:** HS256.
-    *   **Secret:** Usa la misma clave que está en `application.properties`.
-    *   **Payload:** Asegúrate de que el campo `sub` (subject) sea un email que exista en tu base de datos local.
-2.  En Postman, realiza una petición a un endpoint protegido (ej. `GET /api/v1/usuarios`).
-3.  En la pestaña **Authorization**, selecciona **Bearer Token** y pega el token generado.
+Abre una nueva terminal y verifica que el servicio responde:
 
-## 📚 Documentación API (Swagger)
+```Bash
+    curl -v http://localhost:8082
+```
+Si recibes un 401 Unauthorized o 403 Forbidden, ¡El servicio funciona y la seguridad está activa!
 
-Una vez iniciada la aplicación, puedes consultar la documentación interactiva de la API en:
+Si recibes "Connection Refused", verifica que el puerto sea el 8080.
 
-`http://localhost:8082/swagger-ui.html`
-`http://localhost:8082/v3/api-docs`
+## 🔒 Seguridad y Pruebas (JWT)
 
-## 📂 Estructura del Proyecto
+Este microservicio valida el token en cada petición.
+Cómo probar con Postman
 
-*   `controller`: Controladores REST (Endpoints).
-*   `entities`: Entidades JPA (Modelos de BD).
-*   `repository`: Interfaces de acceso a datos (DAO).
-*   `service`: Lógica de negocio.
-*   `jwt`: Utilidades y filtros para seguridad JWT.
-*   `config`: Configuraciones de Spring (Security, Swagger, etc).
+1. Genera un token HS256 en jwt.io usando la misma jwt.secret del application.properties.
+
+2. Realiza un GET a http://localhost:8082/api/v1/usuarios (ajusta según tus endpoints).
+
+3. En la pestaña Authorization, elige Bearer Token y pega tu JWT.
+
+## 📚 Documentación
+
+1. Swagger UI: http://localhost:8082/swagger-ui.html
+
+2. Docs JSON: http://localhost:8082/v3/api-docs
