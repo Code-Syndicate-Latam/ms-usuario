@@ -8,8 +8,7 @@ on:
   schedule:
     - cron: '* 9 * * *'
 
-permissions:
-  contents: inherit
+permissions: inherit
 
 jobs:
   codeql_java_backend:
