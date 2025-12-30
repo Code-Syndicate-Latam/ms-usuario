@@ -2,12 +2,11 @@ name: GitLeaks Scan
 
 on:
   pull_request:
-    branches: [ main, developmen ]
+    branches: [ main, development ]
   push:
     branches: [ main, development ]
 
-permissions:
-  contents: read
+permissions: inherit
 
 jobs:
   call-central-gitleaks:
