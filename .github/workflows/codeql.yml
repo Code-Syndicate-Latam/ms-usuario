@@ -2,16 +2,20 @@ name: codeql.yml
 
 on:
   push:
-    branches: [ main,development ]
+    branches: [ development ]
   pull_request:
-    branches: [ main,development ]
+    branches: [ development ]
   schedule:
-    - cron: '* 9 * * *'
+    - cron: '0 9 * * 0'
 
-permissions: inherit
+permissions:
+  security-events: write
+  contents: read
 
 jobs:
   codeql_java_backend:
+    permissions: inherit
+    secrets: inherit
     uses: Code-Syndicate-Latam/org-security/.github/workflows/codeql_java_backend.yml@main
     with:
-      config-file: .github/codeql/codql-config.yml
+      config-file: .github/codeql/codeql-config.yml
