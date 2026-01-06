@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "user_app")
-public class Usuario {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_app_generator")
@@ -27,19 +28,8 @@ public class Usuario {
             sequenceName = "user_app_user_app_id_seq", // Nombre exacto de la secuencia en PostgreSQL
             allocationSize = 1
     )
-    @Column(name = "user_app_id")
+    @Column(name = "user_id")
     private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", nullable = false)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Role role;
-
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
-    @Column(name = "password", nullable = false)
-    private String password;
 
     @Column(name = "creation_date", nullable = false)
     private Instant creationDate = Instant.now();
@@ -50,6 +40,42 @@ public class Usuario {
 
     @Column(name = "status", nullable = false)
     private Boolean status = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "document_type_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private DocumentType documentType;
+
+
+    @Column(name = "identification_number", length = 20, nullable = false)
+    private String identificationNumber;
+
+
+    @Column(name = "date_of_birth", nullable = false)
+    private LocalDate dateOfBirth;
+
+
+    @Column(name = "first_name", length = 50, nullable = false)
+    private String firstName;
+
+
+    @Column(name = "middle_name", length = 50)
+    private String middleName;
+
+
+    @Column(name = "first_lastname", length = 50, nullable = false)
+    private String firstLastName;
+
+
+    @Column(name = "second_last_name", length = 50)
+    private String secondLastName;
+
+
+    @Column(name = "address", length = 250)
+    private String address;
+
+    @Column(name = "phone", length = 50)
+    private String phone;
 
 
 }
