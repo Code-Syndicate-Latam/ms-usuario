@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   call-central-gitleaks:
-    uses: Code-Syndicate-Latam/org-security/.github/workflows/gitleaks.yml@main
+    uses: Code-Syndicate-Latam/org-security/.github/workflows/gitleaks.yml@027a990d62256d989680515baf05e247a3aa107a
     permissions: 
       contents: read
       packages: read
