@@ -1,0 +1,46 @@
+server:
+  port: 0
+  # Configuration for the Spring Boot application
+spring:
+  application:
+    name: ms-usuario
+  datasource:
+    url: jdbc:postgresql://urbedb.postgres.database.azure.com:5432/ms-usuario-db
+#    url: jdbc:postgresql://aws-1-us-east-1.pooler.supabase.com:5432/postgres
+    username: UrbeDb
+#    username: postgres.srufosazfghvvsxodptq
+    password: Inmo*2026*
+#    password: i?CFYYJG+Qs-E45
+    driver-class-name: org.postgresql.Driver
+  # Hibernate JPA configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+### No tocar la configuracion de eureka ##
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    instance-id: ${spring.application.name}:${random.uuid}
+    prefer-ip-address: true
+
+# Springdoc OpenAPI (Swagger) configuration
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+    enable: true
+  packages-to-scan: com.teamsoft.ms.usuario.controller
+
+logging:
+  level:
+    root: INFO
